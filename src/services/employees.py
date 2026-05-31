@@ -13,7 +13,7 @@ class EmployeesService(BaseService):
     are encapsulated within this layer.
     """
 
-    async def add_employee(self, employee_data: SEmployeeAdd) -> SEmployees:
+    async def add_one(self, employee_data: SEmployeeAdd) -> SEmployees:
         """
         Hire a new employee into a specific department.
 

@@ -1,4 +1,5 @@
 from datetime import date
+
 import pytest
 from src.db.manager import DBManager
 from src.models.departments import DepartmentsORM

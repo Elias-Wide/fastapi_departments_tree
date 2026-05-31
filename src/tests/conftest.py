@@ -4,6 +4,7 @@ from typing import AsyncGenerator
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
+
 from src.db.database import Model, SessionLocal, engine
 from src.db.manager import DBManager
 from src.dependencies.db_manager import get_db_manager

@@ -62,6 +62,7 @@ class DatabaseConfig(ConfigBase):
 class AppConfig(ConfigBase):
     app_name: str
     mode: str = 'Dev'
+    test_data_file: str = 'test_data.json'
 
 
 class Settings(BaseSettings):

@@ -1,10 +1,11 @@
 import pytest
 from httpx import AsyncClient
+
 from src.models.departments import DepartmentsORM
 
 
 @pytest.mark.asyncio
-async def test_create_department_success(
+async def test_add_one_success(
     client: AsyncClient,
     departments_base_route: str,
     valid_department_dicts: list[dict],
@@ -16,7 +17,7 @@ async def test_create_department_success(
 
 
 @pytest.mark.asyncio
-async def test_create_department_validation_error(
+async def test_add_one_validation_error(
     client: AsyncClient,
     departments_base_route: str,
     invalid_department_dicts: list[dict],
@@ -83,7 +84,7 @@ async def test_update_department_validation_error(
 
 
 @pytest.mark.asyncio
-async def test_add_employee_to_department(
+async def test_add_one_to_department(
     client: AsyncClient,
     department_employees_route: str,
     sample_departments: list[DepartmentsORM],

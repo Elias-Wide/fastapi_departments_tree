@@ -31,11 +31,11 @@ router = APIRouter(prefix='/departments', tags=['departments'])
     status_code=status.HTTP_201_CREATED,
     summary='Create a new department',
 )
-async def create_department(
+async def add_one(
     db: DBManagerDep, department: Annotated[SDepartmentsCreate, Depends()]
 ):
     service = DepartmentsService(db)
-    new_department = await service.create_department(department)
+    new_department = await service.add_one(department)
     return SDepartmentsResponse.model_validate(new_department)
 
 
@@ -84,7 +84,7 @@ async def delete_department(
     response_model=SEmployeesResponse,
     summary='Add an employee to the department',
 )
-async def add_employee_to_department(
+async def add_one_to_department(
     db: DBManagerDep,
     department_id: int,
     employee: Annotated[SEmployeesCreate, Depends()],
@@ -94,7 +94,7 @@ async def add_employee_to_department(
     await departments_service.get_department_by_id(department_id)
     employee_data = employee.model_dump()
     employee_data['department_id'] = department_id
-    new_employee = await employees_service.add_employee(
+    new_employee = await employees_service.add_one(
         SEmployeeAdd(**employee_data)
     )
     return SEmployeesResponse.model_validate(new_employee)

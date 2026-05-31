@@ -42,7 +42,7 @@ class DepartmentsService(BaseService):
     validations, and cascade deletion verifications.
     """
 
-    async def create_department(
+    async def add_one(
         self, department_data: SDepartmentsCreate
     ) -> SDepartments:
         """
