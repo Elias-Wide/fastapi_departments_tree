@@ -83,11 +83,15 @@ Once the containers are built, the application will automatically run Alembic mi
 │   │       ├── departments.py
 │   │       ├── employees.py
 │   │       └── routers.py
-│   ├── core/             # App configuration, logging & exceptions
+│   ├── core/                            # App configuration & logging
+│   │   ├── exceptions/                  # Centralized exception handling
+│   │   │   ├── api/                     # API layer exceptions (4xx, validation)
+│   │   │   ├── database/                # DB layer errors (Not Found, Integrity)
+│   │   │   ├── services/                # Business logic exceptions (cycling, etc.)
+│   │   │   ├── handler.py               # FastAPI exception handlers (global catch)
+│   │   │   └── mapper.py
 │   │   ├── constants/    # Business logic constants
-│   │   ├── exceptions/   # Custom API & Service exceptions
-│   │   ├── messages/     # Shared system & response messages
-│   │   └── logging.py
+│   │   ├── logging.py 
 │   ├── db/               # Database connection and session management
 │   │   ├── database.py
 │   │   └── manager.py
@@ -112,7 +116,6 @@ Once the containers are built, the application will automatically run Alembic mi
 │   │   └── employees.py
 │   ├── tests/            # Pytest test suite
 │   │   ├── fixtures/     # Test database fixtures
-│   │   ├── test_departments_api.py
 │   │   └── pytest.ini
 │   ├── config.py         # Environment variables configuration
 │   ├── conftest.py       # Global pytest configurations
