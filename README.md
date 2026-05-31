@@ -54,18 +54,21 @@ Once the containers are built, the application will automatically run Alembic mi
 
 
 
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| **POST** | `/v1/departments` | Create a new department |
-| **GET** | `/v1/departments/` | Get all departments |
-| **GET** | `/v1/departments/{department_id}` | Get department by ID |
-| **PATCH** | `/v1/departments/{department_id}` | Partially update a department by ID (e.g., change parent) |
-| **DELETE** | `/v1/departments/{department_id}` | Delete department by ID |
-| **POST** | `/v1/departments/{department_id}/employees` | Add an employee to the specified department |
+## 📊 API Specification
+
+
+| Method | Endpoint | Query Parameters | Description |
+| :--- | :--- | :--- | :--- |
+| **POST** | `/v1/departments` | _None_ | Create a new department |
+| **GET** | `/v1/departments/` | `depth` *(int, required)*<br>`include_employees` *(bool, default: true)* | Get all departments hierarchy |
+| **GET** | `/v1/departments/{department_id}` | _None_ | Get department by ID |
+| **PATCH** | `/v1/departments/{department_id}` | _None_ | Partially update a department by ID (e.g., change parent) |
+| **DELETE** | `/v1/departments/{department_id}` | `mode` *(str, default: "cascade")*<br>`reassign_to_department_id` *(int, optional)* | Delete department by ID |
+| **POST** | `/v1/departments/{department_id}/employees` | _None_ | Add an employee to the specified department |
+| **GET** | `/v1/employees/` | _None_ | Get all employees |
+| **GET** | `/v1/employees/{employee_id}` | _None_ | Get employee by ID |
 
 ### Employees
-
-
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
