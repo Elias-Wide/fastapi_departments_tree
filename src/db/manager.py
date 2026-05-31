@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.database import SessionLocal
 from src.repositories.departments import DepartmentsRepo
+from src.repositories.employees import EmployeesRepo
 
 
 class DBManager:
@@ -22,6 +23,7 @@ class DBManager:
     async def __aenter__(self) -> 'DBManager':
         self.session = self.session_factory()
         self.departments = DepartmentsRepo(self.session)
+        self.employees = EmployeesRepo(self.session)
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:

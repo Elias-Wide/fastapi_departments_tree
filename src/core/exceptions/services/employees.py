@@ -1,4 +1,3 @@
-
 from src.core.exceptions.services.base import ServiceError
 
 

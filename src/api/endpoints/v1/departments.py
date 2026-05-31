@@ -1,10 +1,24 @@
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Response, status
 
 from src.dependencies.db_manager import DBManagerDep
-from src.schemas.departments import SDepartmentsCreate, SDepartmentsResponse
+from src.dependencies.departments import (
+    DeleteDepartmentParamsDep,
+    get_department_delete_params,
+)
+from src.schemas.departments import (
+    SDepartmentsCreate,
+    SDepartmentsResponse,
+    SDepartmentsUpdate,
+)
+from src.schemas.employees import (
+    SEmployeeAdd,
+    SEmployeesCreate,
+    SEmployeesResponse,
+)
 from src.services.departments import DepartmentsService
+from src.services.employees import EmployeesService
 
 router = APIRouter(prefix='/departments', tags=['departments'])
 
@@ -46,13 +60,50 @@ async def get_department(
     return SDepartmentsResponse.model_validate(department)
 
 
-# @router.patch(
-#     '/{department_id}',
-#     response_model=SDepartmentsResponse,
-#     summary='Partially update a department by ID',
-# )
-# async def update_department(
-#     department_id: int, department_data: SDepartmentsUpdate
-# ):
-#     # TODO: get existing record from DB and update
-#     ...
+@router.delete(
+    '/{department_id}',
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary='Delete department by ID',
+)
+async def delete_department(
+    db: DBManagerDep,
+    department_id: int,
+    delete_params: DeleteDepartmentParamsDep,
+) -> None:
+    service = DepartmentsService(db)
+    await service.delete_department(department_id, **delete_params)
+
+
+@router.post(
+    '/{department_id}/employees',
+    response_model=SEmployeesResponse,
+    summary='Add an employee to the department',
+)
+async def add_employee_to_department(
+    db: DBManagerDep,
+    department_id: int,
+    employee: Annotated[SEmployeesCreate, Depends()],
+) -> SEmployeesResponse:
+    departments_service = DepartmentsService(db)
+    employees_service = EmployeesService(db)
+    department = await departments_service.get_department_by_id(department_id)
+    employee_data = employee.model_dump()
+    employee_data['department_id'] = department.id
+    new_employee = await employees_service.add_employee(
+        SEmployeeAdd(**employee_data)
+    )
+    return SEmployeesResponse.model_validate(new_employee)
+
+
+@router.patch(
+    '/{department_id}',
+    response_model=SDepartmentsResponse,
+    summary='Partially update a department by ID',
+)
+async def update_department(
+    db: DBManagerDep, department_id: int, department_data: SDepartmentsUpdate
+):
+    service = DepartmentsService(db)
+    updated_department = await service.update_department(
+        department_id, department_data
+    )

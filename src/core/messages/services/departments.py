@@ -14,3 +14,4 @@ class DepartmentsErrorMessages:
         "Department with the name '{name}' already exists at this "
         'hierarchy level.'
     )
+    ERR_REASSIGN_DEPT_NOT_FOUND = 'Reassignment failed: target department with ID {department_id} not found.'

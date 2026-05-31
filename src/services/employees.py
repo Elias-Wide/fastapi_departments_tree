@@ -1,6 +1,7 @@
 from typing import List, Optional
 
-from src.schemas.employees import EmployeeSchema
+from src.core.exceptions.services.employees import EmployeeNotFoundError
+from src.schemas.employees import SEmployeeAdd, SEmployees
 from src.services.base import BaseService
 
 
@@ -12,7 +13,7 @@ class EmployeesService(BaseService):
     are encapsulated within this layer.
     """
 
-    async def add_employee(self, employee_data: EmployeeSchema) -> int:
+    async def add_employee(self, employee_data: SEmployeeAdd) -> SEmployees:
         """
         Hire a new employee into a specific department.
 
@@ -22,22 +23,24 @@ class EmployeesService(BaseService):
             employee_data: Pydantic schema containing employee details.
 
         Returns:
-            int: The unique identifier of the newly created employee.
+            SEmployees: The newly created employee record.
         """
-        pass
+        employee = await self.db.employees.add_one(employee_data)
+        return SEmployees.model_validate(employee)
 
-    async def get_all_employees(self) -> List[EmployeeSchema]:
+    async def get_all_employees(self) -> List[SEmployees]:
         """
         Retrieve a list of all active employees in the company.
 
         Returns:
-            List[EmployeeSchema]: A list of all validated records.
+            List[SEmployees]: A list of all validated records.
         """
-        pass
+        employees = await self.db.employees.get_all()
+        return [SEmployees.model_validate(emp) for emp in employees]
 
     async def get_employee_by_id(
         self, employee_id: int
-    ) -> Optional[EmployeeSchema]:
+    ) -> Optional[SEmployees]:
         """
         Find a specific employee by their unique identifier.
 
@@ -45,9 +48,12 @@ class EmployeesService(BaseService):
             employee_id: The ID of the employee to look up.
 
         Returns:
-            Optional[EmployeeSchema]: Validated record or None.
+            Optional[SEmployees]: Validated record or None.
         """
-        pass
+        employee = await self.db.employees.get_one_by_id(employee_id)
+        if not employee:
+            raise EmployeeNotFoundError()
+        return SEmployees.model_validate(employee)
 
     async def delete_employee(self, employee_id: int) -> None:
         """
@@ -56,7 +62,10 @@ class EmployeesService(BaseService):
         Args:
             employee_id: The ID of the employee to delete.
         """
-        pass
+        employee = await self.db.employees.get_one_by_id(employee_id)
+        if not employee:
+            raise EmployeeNotFoundError()
+        await self.db.employees.delete(employee)
 
     async def change_department(
         self, employee_id: int, new_department_id: int

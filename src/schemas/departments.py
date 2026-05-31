@@ -34,3 +34,19 @@ class SDepartmentsResponse(SDepartments):
     """Schema for serializing department data for API responses."""
 
     pass
+
+
+class SDepartmentsUpdate(BaseModel):
+    """Schema for validating data on department updates."""
+
+    name: Optional[str] = Field(
+        None,
+        description='The new name of the department',
+        min_length=DepartmentsConst.NAME_MIN_LEN,
+        max_length=DepartmentsConst.NAME_MAX_LEN,
+    )
+    parent_id: Optional[int] = Field(
+        None,
+        description='Parent department ID if nested',
+        gt=DepartmentsConst.MIN_PARENT_ID,
+    )

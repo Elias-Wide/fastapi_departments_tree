@@ -1,9 +1,11 @@
 from typing import List, Optional
 
+from src.core.constants.departments import DepartmentsConst
 from src.core.exceptions.database import DatabaseError, DBUniqueViolationError
-from src.core.exceptions.services import (
+from src.core.exceptions.services.departments import (
     DepartmentAlreadyExistsError,
     DepartmentServiceError,
+    DepartmentNotFoundError,
 )
 from src.core.exceptions.services.departments import DepartmentNotFoundError
 from src.core.logging import get_logger
@@ -15,6 +17,7 @@ from src.schemas.departments import (
     SDepartments,
     SDepartmentsCreate,
     SDepartmentsResponse,
+    SDepartmentsUpdate,
 )
 from src.services.base import BaseService
 
@@ -92,6 +95,32 @@ class DepartmentsService(BaseService):
             raise DepartmentNotFoundError()
         return SDepartmentsResponse.model_validate(department)
 
+    async def update_department(
+        self, department_id: int, department_data: SDepartmentsUpdate
+    ) -> SDepartmentsResponse:
+        """
+        Partially update an existing department's details.
+
+        Validates the target department existence before applying updates.
+
+        Args:
+            department_id: The ID of the department to update.
+            department_data: Validated data for updating the department.
+
+        Returns:
+            SDepartmentsResponse: The updated department record.
+        """
+        department = await self.db.departments.get_one_by_id(id=department_id)
+        if not department:
+            raise DepartmentNotFoundError()
+        if department_data.parent_id:
+            # check department tree
+            pass
+        updated_department = await self.db.departments.update(
+            department, department_data
+        )
+        return SDepartmentsResponse.model_validate(updated_department)
+
     # async def get_department_tree(
     #     self, department_id: int, depth: int = 1
     # ) -> SDepartmentsTreeResponse:
@@ -125,7 +154,12 @@ class DepartmentsService(BaseService):
         """
         pass
 
-    async def delete_department(self, department_id: int) -> None:
+    async def delete_department(
+        self,
+        department_id: int,
+        mode: str,
+        reassign_to_department_id: int | None = None,
+    ) -> None:
         """
         Remove a department record along with its whole branch.
 
@@ -134,5 +168,23 @@ class DepartmentsService(BaseService):
 
         Args:
             department_id: The ID of the department to delete.
+            mode: The deletion mode ('cascade' or 'reassign').
+            reassign_to_department_id: The ID of the department to reassign employees to (required for 'reassign' mode).
         """
-        pass
+        department = await self.db.departments.get_one_by_id(department_id)
+        if not department:
+            raise DepartmentNotFoundError()
+        if mode == DepartmentsConst.REASSIGN_DELETE_MODE:
+            new_department = await self.db.departments.get_one_by_id(
+                reassign_to_department_id
+            )
+            if not new_department:
+                raise DepartmentNotFoundError(
+                    DepartmentsErrorMessages.ERR_REASSIGN_DEPT_NOT_FOUND.format(
+                        department_id=reassign_to_department_id
+                    )
+                )
+            await self.db.employees.move_employees_to_department(
+                department_id, reassign_to_department_id
+            )
+        await self.db.departments.delete(department)

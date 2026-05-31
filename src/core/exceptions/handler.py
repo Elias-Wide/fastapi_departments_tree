@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 
 from src.core.exceptions.api import APIException
 from src.core.exceptions.mappers import BaseExceptionsMapper, get_mapper
-from src.core.exceptions.services import ServiceError
+from src.core.exceptions.services.base import ServiceError
 
 
 async def service_error_handler(request: Request, exc: ServiceError):

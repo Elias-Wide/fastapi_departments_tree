@@ -52,6 +52,10 @@ class SQLAlchemyRepository(Generic[ModelType, SchemaType]):
             logger.error(DbLogMessages.LOG_FETCH_ERR.format(error=e))
             raise DatabaseError(DbErrorMessages.ERR_FETCH_FAILED) from e
 
+    async def get_one_by_id(self, id: int) -> Optional[ModelType]:
+        """Retrieve a single record by its ID."""
+        return await self.get_one_by_field('id', id)
+
     async def get_one_by_field(
         self, attr_name: str, attr_value: Any
     ) -> Optional[SchemaType]:

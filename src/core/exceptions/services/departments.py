@@ -1,5 +1,3 @@
-
-
 from src.core.exceptions.services.base import ServiceError
 
 
@@ -21,4 +19,3 @@ class DepartmentSelfReferenceError(DepartmentServiceError):
 
 class DepartmentValidationError(DepartmentServiceError):
     msg = 'Provided department data is invalid.'
-

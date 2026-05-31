@@ -3,33 +3,51 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
-
-class SEmployeesBase(BaseModel):
-    """Base schema with shared employee attributes."""
-
-    full_name: str = Field(
-        ..., description='Full name of the employee', min_length=1
-    )
-    position: str = Field(
-        ..., description='Job title or position', min_length=1
-    )
-    hired_at: Optional[date] = Field(None, description='Official hire date')
-    department_id: int = Field(..., description='FK for the department', gt=0)
-    model_config = ConfigDict(from_attributes=True)
+from src.core.constants.employees import EmployeesConts
 
 
-class SEmployeesCreate(SEmployeesBase):
+class SEmployeesCreate(BaseModel):
     """Schema for validating data on employee creation."""
 
-    pass
+    full_name: str = Field(
+        ...,
+        description='Full name of the employee',
+        min_length=EmployeesConts.NAME_MIN_LENGTH,
+        max_length=EmployeesConts.NAME_MAX_LENGTH,
+    )
+    position: str = Field(
+        ...,
+        description='Job title or position',
+        min_length=EmployeesConts.POSITION_MIN_LENGTH,
+        max_length=EmployeesConts.POSITION_MAX_LENGTH,
+    )
+    hired_at: Optional[date] = Field(None, description='Official hire date')
+    model_config = ConfigDict(from_attributes=True)
 
 
-class SEmployeesResponse(SEmployeesBase):
-    """Schema for serializing employee data for API responses."""
+class SEmployeeAdd(SEmployeesCreate):
+    """Schema for adding an employee to a department."""
 
-    id: int = Field(..., description='Unique internal employee ID')
-    created_at: datetime = Field(
-        ..., description='Timestamp when the record was created'
+    department_id: int = Field(
+        ...,
+        description='FK for the department',
+        gt=EmployeesConts.MIN_DEPARTMENT_ID,
     )
 
-    model_config = ConfigDict(from_attributes=True)
+
+class SEmployees(SEmployeesCreate):
+    """Base schema with shared employee attributes."""
+
+    id: int = Field(..., description='Unique internal employee ID')
+    department_id: int = Field(
+        None,
+        description='FK for the department',
+        gt=EmployeesConts.MIN_DEPARTMENT_ID,
+    )
+    created_at: datetime = Field(..., description='Record creation timestamp')
+
+
+class SEmployeesResponse(SEmployees):
+    """Schema for serializing employee data for API responses."""
+
+    pass

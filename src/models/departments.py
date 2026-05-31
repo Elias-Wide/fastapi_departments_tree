@@ -19,7 +19,7 @@ from sqlalchemy.orm import (
 
 from src.core.constants.departments import DepartmentsConst
 from src.core.exceptions.database import DBUniqueViolationError
-from src.core.exceptions.services import DepartmentValidationError
+from src.core.exceptions.services.departments import DepartmentValidationError
 from src.db.database import Model
 from src.core.logging import get_logger
 
