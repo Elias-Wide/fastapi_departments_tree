@@ -42,7 +42,7 @@ class SQLAlchemyRepository(Generic[ModelType, SchemaType]):
             ) from e
         except SQLAlchemyError as e:
             logger.error(DbLogMessages.LOG_INSERT_ERR.format(error=e))
-            raise DatabaseError(DbErrorMessages.ERR_INSERT_FAILED) from e
+            raise DatabaseError(DbErrorMessages.ERR_DB_ERROR) from e
 
     async def get_all(self) -> List[SchemaType]:
         """Retrieve all records."""
@@ -57,7 +57,6 @@ class SQLAlchemyRepository(Generic[ModelType, SchemaType]):
     async def get_one_by_id(self, pk: int) -> Optional[ModelType]:
         """Retrieve a single record by its ID."""
         return await self.get_one_by_field('id', pk)
-
 
     async def get_one_by_field(
         self, attr_name: str, attr_value: Any

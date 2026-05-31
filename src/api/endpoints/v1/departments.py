@@ -111,6 +111,4 @@ async def update_department(
     department_data: Annotated[SDepartmentsUpdate, Depends()],
 ):
     service = DepartmentsService(db)
-    await service.update_department(
-        department_id, department_data
-    )
+    await service.update_department(department_id, department_data)
