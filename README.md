@@ -1,1 +1,125 @@
-# hitalent_test_case
+# Departments Tree Web App 🏢👥
+
+A web application designed to manage company structures, department hierarchies, and employees. This project was developed as a technical assessment for **hitalent**.
+
+The application implements a tree structure for departments (with built-in validation against cyclic dependencies) and covers full CRUD operations for departments and employees.
+
+## ✨ Features & Business Logic
+- **Department Hierarchy**: Every department can have multiple nested sub-departments.
+- **Cycle Prevention**: Includes validation that prevents a department from becoming part of its own hierarchy (a department cannot be its own parent or a child of its own sub-departments).
+- **RESTful API**: Full CRUD management for organizational entities.
+
+## 🛠️ Tech Stack
+- **Backend Framework:** FastAPI (Python)
+- **Data Validation:** Pydantic v2
+- **ORM:** SQLAlchemy (Async)
+- **Database Migrations:** Alembic
+- **Database:** PostgreSQL
+- **Containerization:** Docker & Docker Compose
+
+## 🚀 Quick Start (Local Run)
+
+To run this project locally, ensure you have **Git** and **Docker** (with Docker Compose) installed.
+
+### Steps to Run:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com
+   cd departments_tree
+   ```
+
+2. **Configure environment variables:**
+   Create a `.env` file based on the provided example:
+   ```bash
+   cp .env.example .env
+   ```
+   *Note: Ensure the database connection parameters in your `.env` match your Docker PostgreSQL settings.*
+
+3. **Start the application using Docker Compose:**
+   ```bash
+   docker compose up --build
+   ```
+
+Once the containers are built, the application will automatically run Alembic migrations and start the server.
+
+* **Swagger UI (API Interactive Docs):** http://localhost:8000/docs
+* **ReDoc:** http://localhost:8000/redoc
+
+---
+
+## 📊 API Specification (Endpoints)
+
+### Departments
+
+
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| **POST** | `/v1/departments` | Create a new department |
+| **GET** | `/v1/departments/` | Get all departments |
+| **GET** | `/v1/departments/{department_id}` | Get department by ID |
+| **PATCH** | `/v1/departments/{department_id}` | Partially update a department by ID (e.g., change parent) |
+| **DELETE** | `/v1/departments/{department_id}` | Delete department by ID |
+| **POST** | `/v1/departments/{department_id}/employees` | Add an employee to the specified department |
+
+### Employees
+
+
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| **GET** | `/v1/employees/` | Get all employees |
+| **GET** | `/v1/employees/{employee_id}` | Get employee by ID |
+
+---
+
+## 🛠️ Project Structure
+
+```text
+├── app/                  # Root project directory
+│   ├── api/              # API Routing layer
+│   │   └── endpoints/v1/
+│   │       ├── departments.py
+│   │       ├── employees.py
+│   │       └── routers.py
+│   ├── core/             # App configuration, logging & exceptions
+│   │   ├── constants/    # Business logic constants
+│   │   ├── exceptions/   # Custom API & Service exceptions
+│   │   ├── messages/     # Shared system & response messages
+│   │   └── logging.py
+│   ├── db/               # Database connection and session management
+│   │   ├── database.py
+│   │   └── manager.py
+│   ├── dependencies/     # FastAPI Dependency Injection (DI)
+│   │   ├── db_manager.py
+│   │   └── departments.py
+│   ├── migrations/       # Alembic database migrations
+│   │   └── versions/     # Migration history files
+│   ├── models/           # SQLAlchemy database models
+│   │   ├── departments.py
+│   │   └── employees.py
+│   ├── repositories/     # Data Access Layer (SQLAlchemy CRUD operations)
+│   │   ├── base.py
+│   │   ├── departments.py
+│   │   └── employees.py
+│   ├── schemas/          # Pydantic data validation schemas
+│   │   ├── departments.py
+│   │   └── employees.py
+│   ├── services/         # Core business logic (anti-cycling checks)
+│   │   ├── base.py
+│   │   ├── departments.py
+│   │   └── employees.py
+│   ├── tests/            # Pytest test suite
+│   │   ├── fixtures/     # Test database fixtures
+│   │   ├── test_departments_api.py
+│   │   └── pytest.ini
+│   ├── config.py         # Environment variables configuration
+│   ├── conftest.py       # Global pytest configurations
+│   ├── Dockerfile        # Docker container configuration
+│   └── main.py           # FastAPI application entrypoint
+
+```
+
+## 📄 License
+This project is developed solely as a technical assessment for hitalent. Released under the MIT License.

@@ -1,13 +1,12 @@
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Optional
 
 from pydantic import Field, SecretStr, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_PATH = BASE_DIR / '.env'
-
+SRC_DIR = BASE_DIR / 'src'
 STATIC_DIR = BASE_DIR / 'static'
 
 
@@ -34,29 +33,36 @@ class DatabaseConfig(ConfigBase):
     test_user: str = 'postgres'
     test_url: Optional[str] = Field(default=None)
 
+    @staticmethod
+    def create_url(info: ValidationInfo, prefix: str = '') -> str:
+        """Build connection string from validation info using a prefix."""
+        data = info.data
+        user = data.get(f'{prefix}user')
+        pwd = data.get(f'{prefix}password')
+        host = data.get(f'{prefix}host')
+        port = data.get(f'{prefix}port')
+        name = data.get(f'{prefix}name')
+
+        secret = pwd.get_secret_value() if pwd else ''
+        return f'postgresql+asyncpg://{user}:{secret}@{host}:{port}/{name}'
+
     @field_validator('url', mode='before')
     @classmethod
     def assemble_url(cls, v: Optional[str], info: ValidationInfo) -> str:
-        if not v:
-            return (
-                f'postgresql+asyncpg://{info.data.get("user")}:'
-                f'{info.data.get("password").get_secret_value()}@'
-                f'{info.data.get("host")}:{info.data.get("port")}/'
-                f'{info.data.get("name")}'
-            )
-        return v
+        """Assemble main database URL if not provided."""
+        return v if v else cls.create_url(info, prefix='')
 
     @field_validator('test_url', mode='before')
     @classmethod
     def assemble_test_url(cls, v: Optional[str], info: ValidationInfo) -> str:
-        if not v:
-            return (
-                f'postgresql+asyncpg://{info.data.get("test_user")}:'
-                f'{info.data.get("test_password").get_secret_value()}@'
-                f'{info.data.get("test_host")}:{info.data.get("test_port")}/'
-                f'{info.data.get("test_name")}'
-            )
-        return v
+        """Assemble test database URL if not provided."""
+        return v if v else cls.create_url(info, prefix='test_')
+
+
+class AppConfig(ConfigBase):
+    app_name: str
+    mode: str = 'Dev'
+    test_data_file: str = 'test_data.json'
 
 
 class Settings(BaseSettings):
@@ -66,9 +72,8 @@ class Settings(BaseSettings):
     Integrates database connection and authentication configurations.
     """
 
-    app_name: str = 'Todo'
+    app: AppConfig = Field(default_factory=AppConfig)
     db: DatabaseConfig = Field(default_factory=DatabaseConfig)
-
 
     @classmethod
     def load(cls) -> 'Settings':
@@ -77,4 +82,3 @@ class Settings(BaseSettings):
 
 
 settings: Settings = Settings.load()
-

@@ -11,7 +11,7 @@ from sqlalchemy.orm import (
     declared_attr,
 )
 
-from backend.config import settings
+from src.config import settings
 
 if settings.app.mode == 'TEST':
     DATABASE_URL = settings.db.test_url

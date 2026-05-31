@@ -1,0 +1,54 @@
+# Ruff Configuration File
+# ======================
+# Root directory for source code
+src = ["src"]
+# Maximum allowed line length for code
+line-length = 79
+
+# Number of spaces per indentation level
+indent-width = 4
+
+# Target Python version for compatibility checks
+target-version = "py312"
+
+# List of patterns to exclude from linting and formatting
+extend-exclude = [
+    "migrations",
+    "__pycache__",
+    "manage.py",
+    "settings.py",
+    ".venv",
+    "venv",
+]
+
+[format]
+# Use single quotes for strings unless they contain quotes themselves
+quote-style = "single"
+
+# Use spaces for indentation instead of tabs
+indent-style = "space"
+
+[lint]
+# Selection of active linting rules:
+# "I"   - Isort (Import sorting)
+# "F"   - Pyflakes (Logical errors)
+# "B"   - flake8-bugbear (Common design flaws)
+# "E"   - Pycodestyle (PEP 8 style errors)
+# "N"   - PEP 8 Naming conventions
+# "W"   - Pycodestyle warnings (Whitespace, blank lines)
+# "C90" - Mccabe (Code complexity)
+# "A"   - flake8-builtins (Shadowing built-ins)
+# "RET" - flake8-return (Return statement consistency)
+
+extend-select = ["I", "F", "B", "E", "N", "W", "C90", "A", "RET"]
+
+[lint.flake8-bugbear]
+# Allow calls to these functions in default values ​​(FastAPI specific)
+extend-immutable-calls = [
+    "fastapi.Depends", 
+    "fastapi.params.Depends", 
+    "fastapi.Query", 
+    "fastapi.params.Query", 
+    "fastapi.Path", 
+    "fastapi.params.Path"
+]
