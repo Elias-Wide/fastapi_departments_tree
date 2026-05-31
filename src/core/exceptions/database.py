@@ -10,7 +10,7 @@ class DatabaseError(AppError):
 class DBUniqueViolationError(DatabaseError):
     """Raised when a unique constraint or index is violated."""
 
-    msg = 'Database record already exists.'
+    msg = 'Database record with the same unique value already exists.'
 
 
 class DBIntegrityError(DatabaseError):
@@ -19,7 +19,13 @@ class DBIntegrityError(DatabaseError):
     msg = 'Database integrity constraint violated.'
 
 
-class DBOperationError(DatabaseError):
-    """Raised for connection timeouts or internal query failures."""
+class DBForeignKeyViolationError(DatabaseError):
+    """Raised when a foreign key constraint is violated."""
 
-    msg = 'Internal database execution error.'
+    msg = 'Foreign key constraint violation.'
+
+
+class DbDepartmentSelfReferenceError(DatabaseError):
+    """Raised when a department is set as its own parent."""
+
+    msg = 'Department cannot reference itself as parent.'

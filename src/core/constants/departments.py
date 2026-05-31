@@ -5,3 +5,6 @@ class DepartmentsConst:
     DELETE_MODES: set[str] = {'cascade', 'reassign'}
     CASCADE_DELETE_MODE: str = 'cascade'
     REASSIGN_DELETE_MODE: str = 'reassign'
+    MIN_DEPTH: int = 1
+    MAX_DEPTH: int = 5
+    DEFAULT_DEPTH: int = 1

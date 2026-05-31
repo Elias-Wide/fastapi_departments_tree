@@ -1,15 +1,17 @@
-from typing import Annotated, Any
+from typing import Annotated, Union
 
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, status
 
 from src.dependencies.db_manager import DBManagerDep
 from src.dependencies.departments import (
     DeleteDepartmentParamsDep,
-    get_department_delete_params,
+    GetDepartmentSearchParamsDep,
 )
 from src.schemas.departments import (
     SDepartmentsCreate,
     SDepartmentsResponse,
+    SDepartmentsResponseExtended,
+    SDepartmentsTreeResponse,
     SDepartmentsUpdate,
 )
 from src.schemas.employees import (
@@ -39,7 +41,7 @@ async def create_department(
 
 @router.get(
     '/',
-    response_model=list[SDepartmentsResponse],
+    response_model=list[SDepartmentsResponse, SDepartmentsResponseExtended],
     summary='Get all departments',
 )
 async def get_all_departments(db: DBManagerDep) -> list[SDepartmentsResponse]:
@@ -49,15 +51,18 @@ async def get_all_departments(db: DBManagerDep) -> list[SDepartmentsResponse]:
 
 @router.get(
     '/{department_id}',
-    response_model=SDepartmentsResponse,
+    response_model=Union[
+        SDepartmentsResponse,
+        SDepartmentsResponseExtended,
+        SDepartmentsTreeResponse,
+    ],
     summary='Get department by ID',
 )
 async def get_department(
-    db: DBManagerDep, department_id: int
-) -> SDepartmentsResponse:
+    db: DBManagerDep, department_id: int, params: GetDepartmentSearchParamsDep
+) -> SDepartmentsResponse | SDepartmentsResponseExtended:
     service = DepartmentsService(db)
-    department = await service.get_department_by_id(department_id)
-    return SDepartmentsResponse.model_validate(department)
+    return await service.get_department_by_id(department_id, **params)
 
 
 @router.delete(
@@ -86,9 +91,9 @@ async def add_employee_to_department(
 ) -> SEmployeesResponse:
     departments_service = DepartmentsService(db)
     employees_service = EmployeesService(db)
-    department = await departments_service.get_department_by_id(department_id)
+    await departments_service.get_department_by_id(department_id)
     employee_data = employee.model_dump()
-    employee_data['department_id'] = department.id
+    employee_data['department_id'] = department_id
     new_employee = await employees_service.add_employee(
         SEmployeeAdd(**employee_data)
     )
@@ -101,9 +106,11 @@ async def add_employee_to_department(
     summary='Partially update a department by ID',
 )
 async def update_department(
-    db: DBManagerDep, department_id: int, department_data: SDepartmentsUpdate
+    db: DBManagerDep,
+    department_id: int,
+    department_data: Annotated[SDepartmentsUpdate, Depends()],
 ):
     service = DepartmentsService(db)
-    updated_department = await service.update_department(
+    await service.update_department(
         department_id, department_data
     )

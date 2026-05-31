@@ -7,21 +7,18 @@ from sqlalchemy import (
     UniqueConstraint,
     event,
     func,
-    inspect,
 )
 from sqlalchemy.orm import (
     Mapped,
     Session,
     mapped_column,
     relationship,
-    validates,
 )
 
 from src.core.constants.departments import DepartmentsConst
 from src.core.exceptions.database import DBUniqueViolationError
-from src.core.exceptions.services.departments import DepartmentValidationError
-from src.db.database import Model
 from src.core.logging import get_logger
+from src.db.database import Model
 
 logger = get_logger(__name__)
 if TYPE_CHECKING:
@@ -113,14 +110,14 @@ def validate_department_uniqueness(mapper, connection, target: DepartmentsORM):
     session = Session.object_session(target)
     if not session:
         return
-    stmnt = session.query(DepartmentsORM).filter(
+    query = session.query(DepartmentsORM).filter(
         DepartmentsORM.name == target.name,
         DepartmentsORM.parent_id == target.parent_id,
     )
     if target.id:
-        stmnt = stmnt.filter(DepartmentsORM.id != target.id)
+        query = query.filter(DepartmentsORM.id != target.id)
 
-    if stmnt.first():
+    if query.first():
         logger.error(
             f"Department with name '{target.name}' and "
             f'parent_id {target.parent_id} already exists.'

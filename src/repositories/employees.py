@@ -37,10 +37,10 @@ class EmployeesRepo(SQLAlchemyRepository[EmployeesORM, SEmployees]):
             old_department_id: The ID of the department to move employees from.
             new_department_id: The ID of the department to move employees to.
         """
-        stmnt = (
+        query = (
             self.model.__table__.update()
             .where(self.model.department_id == old_department_id)
             .values(department_id=new_department_id)
         )
-        await self.session.execute(stmnt)
+        await self.session.execute(query)
         await self.session.commit()

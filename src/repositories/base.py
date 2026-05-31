@@ -5,7 +5,10 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.exceptions.database import DatabaseError, DBUniqueViolationError
+from src.core.exceptions.database import (
+    DatabaseError,
+    DBForeignKeyViolationError,
+)
 from src.core.logging import get_logger
 from src.core.messages.database import DbErrorMessages, DbLogMessages
 from src.db.database import Model
@@ -33,10 +36,9 @@ class SQLAlchemyRepository(Generic[ModelType, SchemaType]):
             await self.session.flush()
             return model_obj
         except IntegrityError as e:
-            print(type(e), e)
             logger.error(DbLogMessages.LOG_INTEGRITY_ERR.format(error=e))
-            raise DBUniqueViolationError(
-                DbErrorMessages.ERR_RECORD_EXISTS
+            raise DBForeignKeyViolationError(
+                DbErrorMessages.ERR_FOREIGN_KEY_VIOLATION
             ) from e
         except SQLAlchemyError as e:
             logger.error(DbLogMessages.LOG_INSERT_ERR.format(error=e))
@@ -52,9 +54,10 @@ class SQLAlchemyRepository(Generic[ModelType, SchemaType]):
             logger.error(DbLogMessages.LOG_FETCH_ERR.format(error=e))
             raise DatabaseError(DbErrorMessages.ERR_FETCH_FAILED) from e
 
-    async def get_one_by_id(self, id: int) -> Optional[ModelType]:
+    async def get_one_by_id(self, pk: int) -> Optional[ModelType]:
         """Retrieve a single record by its ID."""
-        return await self.get_one_by_field('id', id)
+        return await self.get_one_by_field('id', pk)
+
 
     async def get_one_by_field(
         self, attr_name: str, attr_value: Any

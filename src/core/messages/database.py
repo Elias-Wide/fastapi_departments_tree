@@ -3,6 +3,8 @@ class DbLogMessages:
     LOG_CREATE_ERR = 'Unexpected error in add_one: {error}'
     LOG_FETCH_ERR = 'Database error in get_all: {error}'
     LOG_DELETE_ERR = 'Database error in delete: {error}'
+    LOG_FOREIGN_KEY_ERR = 'Foreign key violation in add_one: {error}'
+    LOG_INSERT_ERR = 'Error inserting record: {error}'
 
 
 class DbErrorMessages:
@@ -10,3 +12,4 @@ class DbErrorMessages:
     ERR_DB_ERROR = 'Internal database error.'
     ERR_FETCH_FAILED = 'Failed to fetch records.'
     ERR_DELETE_FAILED = 'Failed to delete record.'
+    ERR_FOREIGN_KEY_VIOLATION = 'Foreign key constraint violation.'

@@ -1,5 +1,6 @@
-from typing import Annotated, Any, Literal
-from fastapi import Depends, HTTPException, Query, status
+from typing import Annotated, Any
+
+from fastapi import Depends, HTTPException, status
 
 from src.core.constants.departments import DepartmentsConst
 from src.core.messages.api.base import ApiErrorMessages
@@ -31,6 +32,39 @@ async def get_department_delete_params(
     }
 
 
+async def get_department_search_params(
+    depth: int, include_employees: bool = True
+):
+    """Validate and return parameters for department search."""
+    if depth < DepartmentsConst.MIN_DEPTH:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=(
+                ApiErrorMessages.DEPARTMENT_SEARCH_DEPTH_TOO_LOW.format(
+                    param='depth',
+                    min_depth=DepartmentsConst.MIN_DEPTH,
+                )
+            ),
+        )
+    if depth > DepartmentsConst.MAX_DEPTH:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=(
+                ApiErrorMessages.DEPARTMENT_SEARCH_DEPTH_TOO_HIGH.format(
+                    param='depth',
+                    max_depth=DepartmentsConst.MAX_DEPTH,
+                )
+            ),
+        )
+    return {
+        'depth': depth,
+        'include_employees': include_employees,
+    }
+
+
 DeleteDepartmentParamsDep = Annotated[
-    dict[str, Any], Depends(get_department_delete_params)
+    dict[str], Depends(get_department_delete_params)
+]
+GetDepartmentSearchParamsDep = Annotated[
+    dict[str], Depends(get_department_search_params)
 ]

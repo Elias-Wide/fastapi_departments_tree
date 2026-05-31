@@ -1,7 +1,7 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
-from src.core.exceptions.api import APIException
+from src.core.exceptions.api.departments import APIException
 from src.core.exceptions.mappers import BaseExceptionsMapper, get_mapper
 from src.core.exceptions.services.base import ServiceError
 

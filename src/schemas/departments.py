@@ -1,8 +1,10 @@
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
+
 from src.core.constants.departments import DepartmentsConst
+from src.schemas.employees import SEmployeesResponse
 
 
 class SDepartmentsCreate(BaseModel):
@@ -15,7 +17,9 @@ class SDepartmentsCreate(BaseModel):
         max_length=DepartmentsConst.NAME_MAX_LEN,
     )
     parent_id: Optional[int] = Field(
-        None, description='Parent department ID if nested', gt=0
+        None,
+        description='Parent department ID if nested',
+        gt=DepartmentsConst.MIN_PARENT_ID,
     )
     model_config = ConfigDict(from_attributes=True)
 
@@ -31,9 +35,9 @@ class SDepartments(SDepartmentsCreate):
 
 
 class SDepartmentsResponse(SDepartments):
-    """Schema for serializing department data for API responses."""
+    """Schema for serializing flat department data."""
 
-    pass
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SDepartmentsUpdate(BaseModel):
@@ -50,3 +54,26 @@ class SDepartmentsUpdate(BaseModel):
         description='Parent department ID if nested',
         gt=DepartmentsConst.MIN_PARENT_ID,
     )
+
+
+class SDepartmentsResponseExtended(SDepartmentsResponse):
+    """Schema for flat department data including its employee records."""
+
+    employees: List[SEmployeesResponse] = Field(
+        default_factory=list, description='List of employees in the department'
+    )
+
+
+class SDepartmentsTreeResponse(SDepartmentsResponse):
+    """Schema for department tree where employees are optional."""
+
+    employees: Optional[List[SEmployeesResponse]] = Field(
+        None, description='List of employees (None if not requested)'
+    )
+    children: List['SDepartmentsTreeResponse'] = Field(
+        default_factory=list, description='List of child departments'
+    )
+    model_config = ConfigDict(from_attributes=True)
+
+
+SDepartmentsTreeResponse.model_rebuild()

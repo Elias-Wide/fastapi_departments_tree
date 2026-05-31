@@ -4,7 +4,6 @@ from src.dependencies.db_manager import DBManagerDep
 from src.schemas.employees import SEmployeesResponse
 from src.services.employees import EmployeesService
 
-
 router = APIRouter(prefix='/employees', tags=['employees'])
 
 

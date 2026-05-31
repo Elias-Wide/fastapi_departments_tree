@@ -1,15 +1,17 @@
 # src/core/exceptions/mappers.py
 from typing import Dict, Type
 
-from src.core.exceptions.api import (
+from src.core.exceptions.api.departments import (
     APIException,
     DepartmentConflictAPIException,
     DepartmentNotFoundAPIException,
     DepartmentSelfReferenceAPIException,
     DepartmentValidationAPIException,
+)
+from src.core.exceptions.api.employees import (
+    EmployeeAPIException,
     EmployeeConflictAPIException,
     EmployeeNotFoundAPIException,
-    EmployeeValidationAPIException,
 )
 from src.core.exceptions.services.departments import (
     DepartmentAlreadyExistsError,
@@ -17,6 +19,7 @@ from src.core.exceptions.services.departments import (
     DepartmentSelfReferenceError,
     DepartmentServiceError,
     DepartmentValidationError,
+    ParentDepartmentError,
     ServiceError,
 )
 from src.core.exceptions.services.employees import (
@@ -53,6 +56,7 @@ class DepartmentsExcMapper(BaseExceptionsMapper):
         DepartmentNotFoundError: DepartmentNotFoundAPIException,
         DepartmentSelfReferenceError: DepartmentSelfReferenceAPIException,
         DepartmentValidationError: DepartmentValidationAPIException,
+        ParentDepartmentError: DepartmentValidationAPIException,
     }
 
 
@@ -62,7 +66,7 @@ class EmployeesExcMapper(BaseExceptionsMapper):
     MAP = {
         EmployeeNotFoundError: EmployeeNotFoundAPIException,
         EmployeeAlreadyExistsError: EmployeeConflictAPIException,
-        EmployeeValidationError: EmployeeValidationAPIException,
+        EmployeeValidationError: EmployeeAPIException,
     }
 
 

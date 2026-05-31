@@ -17,5 +17,13 @@ class DepartmentSelfReferenceError(DepartmentServiceError):
     msg = 'A department cannot be its own parent.'
 
 
+class DepartmentCycleError(DepartmentServiceError):
+    msg = 'Cannot set parent department due to cyclical reference.'
+
+
 class DepartmentValidationError(DepartmentServiceError):
     msg = 'Provided department data is invalid.'
+
+
+class ParentDepartmentError(DepartmentServiceError):
+    msg = 'The specified parent department does not exist.'
