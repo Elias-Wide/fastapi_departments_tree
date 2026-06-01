@@ -87,7 +87,7 @@ Once the containers are built, the application will automatically run Alembic mi
 │   │   ├── constants/    # Business logic constants
 │   │   ├── exceptions/   # Custom API & Service exceptions
 │   │   ├── messages/     # Shared system & response messages
-│   │   └── logging.py
+│   │   └── logging.py    
 │   ├── db/               # Database connection and session management
 │   │   ├── database.py
 │   │   └── manager.py
