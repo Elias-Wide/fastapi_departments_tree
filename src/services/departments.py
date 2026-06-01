@@ -124,38 +124,18 @@ class DepartmentsService(BaseService):
     async def delete_department(
         self,
         department_id: int,
-        mode: str,
-        reassign_to_department_id: int | None = None,
     ) -> None:
         """
         Remove a department record along with its whole branch.
 
         Triggers a cascade delete for all sub-departments and
         associated employees via DB rules.
-
         Args:
             department_id: The ID of the department to delete.
-            mode: The deletion mode ('cascade' or 'reassign').
-            reassign_to_department_id:
-                The ID of the department to reassign employees to
-                (required for 'reassign' mode).
         """
         department = await self.db.departments.get_one_by_id(department_id)
         if not department:
             raise DepartmentNotFoundError()
-        if mode == DepartmentsConst.REASSIGN_DELETE_MODE:
-            new_department = await self.db.departments.get_one_by_id(
-                reassign_to_department_id
-            )
-            if not new_department:
-                raise DepartmentNotFoundError(
-                    DepartmentsErrorMessages.ERR_REASSIGN_DEPT_NOT_FOUND.format(
-                        department_id=reassign_to_department_id
-                    )
-                )
-            await self.db.employees.move_employees_to_department(
-                department_id, reassign_to_department_id
-            )
         await self.db.departments.delete(department)
 
     async def _check_department_tree_validity(
@@ -263,3 +243,6 @@ class DepartmentsService(BaseService):
         if not root_node:
             raise DepartmentNotFoundError()
         return root_node
+
+    async def get_department_children(self, department_id: int):
+        return await self.db.departments.get_department_hierarchy

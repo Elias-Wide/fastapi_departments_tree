@@ -12,7 +12,7 @@ logger = get_logger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    setup_logging() 
+    setup_logging()
     yield
 
 

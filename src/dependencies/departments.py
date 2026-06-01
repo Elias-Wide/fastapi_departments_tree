@@ -2,7 +2,10 @@ from typing import Annotated, Any
 
 from fastapi import Depends, HTTPException, status
 
-from src.core.constants.departments import DepartmentsConst
+from src.core.constants.departments import (
+    ALLOWED_DELETE_MODES,
+    DepartmentsConst,
+)
 from src.core.messages.api.base import ApiErrorMessages
 
 
@@ -11,17 +14,24 @@ async def get_department_delete_params(
     reassign_to_department_id: int | None = None,
 ) -> dict[str, Any]:
     """Validate and return parameters for department deletion."""
+
+    if mode not in ALLOWED_DELETE_MODES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                f'Invalid delete mode. Allowed options: '
+                f'{", ".join(ALLOWED_DELETE_MODES)}'
+            ),
+        )
     if (
         mode == DepartmentsConst.REASSIGN_DELETE_MODE
         and reassign_to_department_id is None
     ):
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=(
-                ApiErrorMessages.DEPARATMENT_ID_FOR_REASSIGNMENT_REQUIRED.format(
-                    param='reassign_to_department_id',
-                    mode=DepartmentsConst.REASSIGN_DELETE_MODE,
-                )
+            detail=ApiErrorMessages.DEPARTMENT_ID_FOR_REASSIGNMENT_REQUIRED.format(
+                param='reassign_to_department_id',
+                mode=mode,
             ),
         )
     if mode == DepartmentsConst.CASCADE_DELETE_MODE:

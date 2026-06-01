@@ -6,8 +6,8 @@ def setup_logging() -> None:
     logging.basicConfig(
         level=logging.INFO,
         format=(
-            "%(filename)s:%(lineno)d #%(levelname)-8s "
-            "[%(asctime)s] - %(name)s - %(message)s"
+            '%(filename)s:%(lineno)d #%(levelname)-8s '
+            '[%(asctime)s] - %(name)s - %(message)s'
         ),
         force=True,
     )

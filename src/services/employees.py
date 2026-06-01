@@ -67,8 +67,8 @@ class EmployeesService(BaseService):
             raise EmployeeNotFoundError()
         await self.db.employees.delete(employee)
 
-    async def change_department(
-        self, employee_id: int, new_department_id: int
+    async def move_employees_to_department(
+        self, employees_ids: List[int], new_department_id: int
     ) -> None:
         """
         Transfer an employee to a different department.
@@ -79,4 +79,4 @@ class EmployeesService(BaseService):
             employee_id: The ID of the employee being moved.
             new_department_id: The destination department ID.
         """
-        pass
+        await self.db.employees.bulk_change_department

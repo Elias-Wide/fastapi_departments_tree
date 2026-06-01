@@ -8,3 +8,9 @@ class DepartmentsConst:
     MIN_DEPTH: int = 1
     MAX_DEPTH: int = 5
     DEFAULT_DEPTH: int = 1
+
+
+ALLOWED_DELETE_MODES: set[str] = {
+    DepartmentsConst.CASCADE_DELETE_MODE,
+    DepartmentsConst.REASSIGN_DELETE_MODE,
+}

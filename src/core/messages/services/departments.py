@@ -43,3 +43,12 @@ class DepartmentsErrorMessages:
     FK_PARENT_DEPT_NOT_FOUND = (
         'Parent department with the specified ID does not exist.'
     )
+    ERR_REASSIGN_DEPT_ID_REQUIRED = (
+        'Reassign department ID is required for this delete mode.'
+    )
+    ERR_REASSIGN_HIERARCHY = (
+        'Cannot reassign to a department within the deleted hierarchy.'
+    )
+    ERR_DEL_DEPT_SAME_ID = (
+        'Cannot reassign employees to the department for deletion.'
+    )

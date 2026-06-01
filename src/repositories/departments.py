@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 
 from sqlalchemy import literal, select
 from sqlalchemy.exc import SQLAlchemyError
@@ -46,7 +46,7 @@ class DepartmentsRepo(SQLAlchemyRepository):
             DepartmentsORM: The created department record.
         """
         obj = await super().add_one(department_data)
-        department_with_descendants = await self.get_department_hierarchy(
+        department_with_sub_departments = await self.get_department_hierarchy(
             department_id=obj.id,
             depth=DepartmentsConst.MAX_DEPTH,
             include_employees=False,
@@ -54,7 +54,7 @@ class DepartmentsRepo(SQLAlchemyRepository):
         self._validate_tree_hierarchy(
             department_id=obj.id,
             new_parent_id=department_data.parent_id,
-            descendants=department_with_descendants,
+            sub_departments=department_with_sub_departments,
         )
         await self.session.commit()
         return obj
@@ -75,7 +75,7 @@ class DepartmentsRepo(SQLAlchemyRepository):
     ) -> DepartmentsORM:
         """Update an existing department's details and trigger check."""
         if update_data.parent_id:
-            descendants = await self.get_department_hierarchy(
+            sub_departments = await self.get_department_hierarchy(
                 department_id=department.id,
                 depth=DepartmentsConst.MAX_DEPTH,
                 include_employees=False,
@@ -83,7 +83,7 @@ class DepartmentsRepo(SQLAlchemyRepository):
             self._validate_tree_hierarchy(
                 department_id=department.id,
                 new_parent_id=update_data.parent_id,
-                descendants=descendants,
+                sub_departments=sub_departments,
             )
         department = await super().update(department, update_data)
         await self.session.commit()
@@ -112,22 +112,26 @@ class DepartmentsRepo(SQLAlchemyRepository):
         depth: int,
         include_employees: bool = False,
     ) -> List[DepartmentsORM]:
-        """Recursively fetches a department tree up to max_depth.
+        """Recursively fetch a department tree up to a specified depth.
 
-        Optionally eager-loads employees using selectinload to prevent N+1
-        queries.
+        Args:
+            department_id: The ID of the root department.
+            depth: The maximum depth of the recursive tree search.
+            include_employees: If True, eager loads employees relation.
+
+        Returns:
+            A list of departments matching the hierarchy criteria.
         """
         base_cte = select(self.model.id, literal(1).label('depth')).where(
             self.model.id == department_id
         )
         cte = base_cte.cte(name='department_tree_cte', recursive=True)
-        recursive_alias = aliased(self.model)
 
+        recursive_alias = aliased(self.model)
         recursive_query = select(
             recursive_alias.id, (cte.c.depth + 1).label('depth')
         ).join(recursive_alias, recursive_alias.parent_id == cte.c.id)
         recursive_query = recursive_query.where(cte.c.depth < depth)
-
         cte_statement = cte.union_all(recursive_query)
 
         final_query = select(self.model).join(
@@ -142,17 +146,52 @@ class DepartmentsRepo(SQLAlchemyRepository):
         result = await self.session.execute(final_query)
         return list(result.scalars().all())
 
+    async def _get_department_full_hierarchy(
+        self,
+        department_id: int,
+    ) -> Dict[str, List[int]]:
+        """Collect sub-department and employee IDs required for deletion logic.
+
+        Args:
+            department_id: The ID of the department.
+
+        Returns:
+            A dictionary containing lists of sub-department IDs and
+            transferable employee IDs.
+        """
+        departments = await self.get_department_hierarchy(
+            department_id=department_id,
+            depth=DepartmentsConst.MAX_DEPTH,
+            include_employees=True,
+        )
+
+        sub_department_ids = [
+            d.id for d in departments if d.id != department_id
+        ]
+
+        employee_ids = [
+            emp.id
+            for d in departments
+            if d.id != department_id
+            for emp in d.employees
+        ]
+
+        return {
+            'sub_department_ids': sub_department_ids,
+            'employee_ids': employee_ids,
+        }
+
     def _validate_tree_hierarchy(
         self,
         department_id: int,
         new_parent_id: int,
-        descendants: List[DepartmentsORM],
+        sub_departments: List[DepartmentsORM],
     ) -> None:
         """Validate that the new parent does not cause issues."""
         if department_id == new_parent_id:
             raise DepartmentSelfReferenceError()
-        descendant_ids = {obj.id for obj in descendants}
-        if new_parent_id in descendant_ids:
+        sub_departments_ids = {obj.id for obj in sub_departments}
+        if new_parent_id in sub_departments_ids:
             msg = DepartmentsLogMessages.LOG_DEPT_CYCLE_ERR
             logger.error(
                 msg.format(
