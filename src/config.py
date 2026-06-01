@@ -6,8 +6,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_PATH = BASE_DIR / '.env'
-SRC_DIR = BASE_DIR / 'src'
-STATIC_DIR = BASE_DIR / 'static'
 
 
 class ConfigBase(BaseSettings):
@@ -60,23 +58,17 @@ class DatabaseConfig(ConfigBase):
 
 
 class AppConfig(ConfigBase):
-    app_name: str
-    mode: str = 'Dev'
+    model_config = SettingsConfigDict(env_prefix='app_')
+    name: str
+    mode: str
 
 
 class Settings(BaseSettings):
-    """
-    Global application settings container.
-
-    Integrates database connection and authentication configurations.
-    """
-
     app: AppConfig = Field(default_factory=AppConfig)
     db: DatabaseConfig = Field(default_factory=DatabaseConfig)
 
     @classmethod
     def load(cls) -> 'Settings':
-        """Initializes and returns a Settings instance."""
         return cls()
 
 

@@ -16,7 +16,7 @@ from src.config import settings
 if settings.app.mode == 'TEST':
     DATABASE_URL = settings.db.test_url
     DATABASE_PARAMS = {'poolclass': NullPool}
-if settings.app.mode == 'DEV':
+elif settings.app.mode == 'DEV':
     DATABASE_URL = settings.db.url
     DATABASE_PARAMS = {'echo': True}
 else:
@@ -24,7 +24,6 @@ else:
     DATABASE_PARAMS = {}
 
 engine = create_async_engine(DATABASE_URL, **DATABASE_PARAMS)
-
 SessionLocal = async_sessionmaker(
     engine, expire_on_commit=False, class_=AsyncSession
 )
@@ -41,7 +40,7 @@ class PreBase:
     @declared_attr
     def __tablename__(self) -> str:
         """Returns the table name for the model in lowercase"""
-        return self.__name__.lower()[:-3]  # Remove Orm suffix
+        return self.__name__.lower()[:-3]
 
     id = Column(Integer, primary_key=True)
 

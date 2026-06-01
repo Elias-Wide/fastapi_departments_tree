@@ -50,27 +50,22 @@ async def client(db_session: DBManager) -> AsyncGenerator[AsyncClient, None]:
 
     app.dependency_overrides[get_db_manager] = override_get_db_manager
     async with AsyncClient(
-        transport=ASGITransport(app=app), base_url='http://test'
+        transport=ASGITransport(app=app), base_url='http://test/api/v1'
     ) as ac:
         yield ac
     app.dependency_overrides.clear()
 
 
 @pytest.fixture
-def main_api_route() -> str:
-    return '/api/v1'
-
-
-@pytest.fixture
-def departments_base_route(main_api_route: str) -> str:
-    return f'{main_api_route}/departments'
+def departments_base_route() -> str:
+    return '/departments'
 
 
 @pytest.fixture
 def department_id_route(departments_base_route: str) -> str:
-    return f'{departments_base_route}/{{department_id}}'
+    return '/{department_id}'
 
 
 @pytest.fixture
 def department_employees_route(department_id_route: str) -> str:
-    return f'{department_id_route}/employees'
+    return f'/{department_id_route}/employees'

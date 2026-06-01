@@ -25,8 +25,8 @@ To run this project locally, ensure you have **Git** and **Docker** (with Docker
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com
-   cd departments_tree
+   git clone git@github.com:Elias-Wide/fastapi_departments_tree.git
+   cd fastapi_departments_tree
    ```
 
 2. **Configure environment variables:**

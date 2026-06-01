@@ -13,5 +13,5 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-app.include_router(main_router)
+app.include_router(main_router, prefix='/api')
 app.add_exception_handler(ServiceError, service_error_handler)
