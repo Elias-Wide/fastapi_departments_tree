@@ -61,8 +61,8 @@ The application will automatically run Alembic migrations and start the server.
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| **GET** | `/v1/employees/` | Get all employees |
-| **GET** | `/v1/employees/{employee_id}` | Get employee by ID |
+| **GET** | `/employees/` | Get all employees |
+| **GET** | `/employees/{employee_id}` | Get employee by ID |
 
 ---
 
