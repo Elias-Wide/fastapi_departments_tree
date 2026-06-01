@@ -50,12 +50,12 @@ The application will automatically run Alembic migrations and start the server.
 
 | Method | Endpoint | Query Parameters | Description |
 | :--- | :--- | :--- | :--- |
-| **POST** | `/v1/departments` | _None_ | Create a new department |
-| **GET** | `/v1/departments/` | _None__| Get all departments hierarchy |
-| **GET** | `/v1/departments/{department_id}` |  `depth` *(int, required)*<br>`include_employees` *(bool, default: true)* | Get department by ID |
-| **PATCH** | `/v1/departments/{department_id}` | _None_ | Partially update a department by ID (e.g., change parent) |
-| **DELETE** | `/v1/departments/{department_id}` | `mode` *(str("cascade | reassign"), default: "cascade, reassign")*<br>`reassign_to_department_id` *(int, optional)* | Delete department by ID |
-| **POST** | `/v1/departments/{department_id}/employees` | _None_ | Add an employee to the specified department |
+| **POST** | `/departments` | _None_ | Create a new department |
+| **GET** | `/departments/` | _None__| Get all departments hierarchy |
+| **GET** | `/departments/{department_id}` |  `depth` *(int, required)*<br>`include_employees` *(bool, default: true)* | Get department by ID |
+| **PATCH** | `/departments/{department_id}` | _None_ | Partially update a department by ID (e.g., change parent) |
+| **DELETE** | `/departments/{department_id}` | `mode` *(str("cascade | reassign"), default: "cascade, reassign")*<br>`reassign_to_department_id` *(int, optional)* | Delete department by ID |
+| **POST** | `/departments/{department_id}/employees` | _None_ | Add an employee to the specified department |
 
 ### Employees
 
