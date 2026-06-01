@@ -1,6 +1,6 @@
 # Departments Tree Web App
 
-A web application designed to manage company structures, department hierarchies, and employees. This project was developed as a technical assessment for **hitalent**.
+A web application designed to manage company structures, department hierarchies, and employees. This project was developed as a test case for **hitalent**.
 
 The application implements a tree structure for departments (with built-in validation against cyclic dependencies) and covers full CRUD operations for departments and employees.
 
