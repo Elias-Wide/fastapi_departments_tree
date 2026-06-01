@@ -32,3 +32,6 @@ README.md
 **/postgres_data/
 **/*.sqlite3
 **/*.db
+
+.vscode/
+fastapi_departments_tree.code-workspace
