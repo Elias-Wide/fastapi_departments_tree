@@ -19,8 +19,6 @@ The application implements a tree structure for departments (with built-in valid
 
 ##  Quick Start (Local Run)
 
-To run this project locally, ensure you have **Git** and **Docker** (with Docker Compose) installed.
-
 ### Steps to Run:
 
 1. **Clone the repository:**
@@ -34,8 +32,6 @@ To run this project locally, ensure you have **Git** and **Docker** (with Docker
    ```bash
    cp .env.example .env
    ```
-   *Note: Ensure the database connection parameters in your `.env` match your Docker PostgreSQL settings.*
-
 3. **Start the application using Docker Compose:**
    ```bash
    docker compose up --build
@@ -51,11 +47,6 @@ The application will automatically run Alembic migrations and start the server.
 ## API Specification (Endpoints)
 
 ### Departments
-
-
-
-## API Specification
-
 
 | Method | Endpoint | Query Parameters | Description |
 | :--- | :--- | :--- | :--- |
