@@ -1,6 +1,6 @@
-from typing import Annotated, Union
+from typing import Union
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, status
 
 from src.dependencies.db_manager import DBManagerDep
 from src.dependencies.departments import (
@@ -31,17 +31,15 @@ router = APIRouter(prefix='/departments', tags=['departments'])
     status_code=status.HTTP_201_CREATED,
     summary='Create a new department',
 )
-async def add_one(
-    db: DBManagerDep, department: Annotated[SDepartmentsCreate, Depends()]
-):
+async def add_one(db: DBManagerDep, department: SDepartmentsCreate):
     service = DepartmentsService(db)
     new_department = await service.add_one(department)
     return SDepartmentsResponse.model_validate(new_department)
 
 
 @router.get(
-    '/',
-    response_model=list[SDepartmentsResponse, SDepartmentsResponseExtended],
+    '',
+    response_model=list[SDepartmentsResponse],
     summary='Get all departments',
 )
 async def get_all_departments(db: DBManagerDep) -> list[SDepartmentsResponse]:
@@ -87,13 +85,16 @@ async def delete_department(
 async def add_one_to_department(
     db: DBManagerDep,
     department_id: int,
-    employee: Annotated[SEmployeesCreate, Depends()],
+    employee: SEmployeesCreate,
 ) -> SEmployeesResponse:
     departments_service = DepartmentsService(db)
     employees_service = EmployeesService(db)
+
     await departments_service.get_department_by_id(department_id)
+
     employee_data = employee.model_dump()
     employee_data['department_id'] = department_id
+
     new_employee = await employees_service.add_one(
         SEmployeeAdd(**employee_data)
     )
@@ -108,7 +109,10 @@ async def add_one_to_department(
 async def update_department(
     db: DBManagerDep,
     department_id: int,
-    department_data: Annotated[SDepartmentsUpdate, Depends()],
+    department_data: SDepartmentsUpdate,
 ):
     service = DepartmentsService(db)
-    await service.update_department(department_id, department_data)
+    new_department = await service.update_department(
+        department_id, department_data
+    )
+    return SDepartmentsResponse.model_validate(new_department)

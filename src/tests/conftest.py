@@ -4,19 +4,20 @@ from typing import AsyncGenerator
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import async_sessionmaker
 
-from src.db.database import Model, SessionLocal, engine
+os.environ['APP_MODE'] = 'TEST'
+
+from src.db.database import Model, engine
 from src.db.manager import DBManager
 from src.dependencies.db_manager import get_db_manager
 from src.main import app
-from src.tests.fixtures.departments import *  # noqa: F403, F401
-from src.tests.fixtures.employess import *  # noqa: F403, F401
-
-os.environ['APP_MODE'] = 'TEST'
+from src.tests.fixtures.departments import *  # noqa
 
 
 @pytest_asyncio.fixture(scope='session', loop_scope='session', autouse=True)
 async def setup_db():
+    """Manage lifecycle of test database tables."""
     async with engine.begin() as conn:
         await conn.run_sync(Model.metadata.create_all)
     yield
@@ -27,17 +28,23 @@ async def setup_db():
 
 @pytest_asyncio.fixture(scope='function', loop_scope='function')
 async def db_session() -> AsyncGenerator[DBManager, None]:
-    async with DBManager(session_factory=SessionLocal) as manager:
-        yield manager
-    async with engine.begin() as conn:
-        for table in reversed(Model.metadata.sorted_tables):
-            await conn.execute(table.delete())
+    """Provide a transactional DBManager that rolls back after each test."""
+    async with engine.connect() as connection:
+        async with connection.begin() as transaction:
+            async_session_factory = async_sessionmaker(
+                bind=connection, expire_on_commit=False
+            )
+            async with DBManager(
+                session_factory=async_session_factory
+            ) as manager:
+                yield manager
+            await transaction.rollback()
 
 
 @pytest_asyncio.fixture(scope='function', loop_scope='function')
-async def client(
-    db_session: DBManager,
-) -> AsyncGenerator[AsyncClient, None]:
+async def client(db_session: DBManager) -> AsyncGenerator[AsyncClient, None]:
+    """Provide an HTTP client with overridden database dependencies."""
+
     async def override_get_db_manager():
         yield db_session
 

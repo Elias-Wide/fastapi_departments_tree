@@ -116,37 +116,10 @@ class DepartmentsService(BaseService):
         department = await self.db.departments.get_one_by_id(id=department_id)
         if not department:
             raise DepartmentNotFoundError()
-        if department_data.parent_id:
-            departments_lst: List[
-                DepartmentsORM
-            ] = await self.db.departments.get_department_tree(
-                department_id=department_id, depth=DepartmentsConst.MAX_DEPTH
-            )
-            self._check_department_tree_validity(
-                department_id=department.id,
-                new_parent_id=department_data.parent_id,
-                department_lst=departments_lst,
-            )
-            pass
         updated_department = await self.db.departments.update(
             department, department_data
         )
         return SDepartmentsResponse.model_validate(updated_department)
-
-    async def move_department(
-        self, department_id: int, new_parent_id: Optional[int]
-    ) -> None:
-        """
-        Relocate a department to a new parent department
-
-        Performs strict recursive validation to prevent any cyclical
-        dependencies.
-
-        Args:
-            department_id: The ID of the department being moved.
-            new_parent_id: Target parent department ID or None for root.
-        """
-        pass
 
     async def delete_department(
         self,
@@ -243,7 +216,7 @@ class DepartmentsService(BaseService):
 
         departments: List[
             DepartmentsORM
-        ] = await self.db.departments.get_department_tree(
+        ] = await self.db.departments.get_department_hierarchy(
             department_id, depth, include_employees
         )
         if not departments:

@@ -1,0 +1,34 @@
+# Python
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+**/.pytest_cache/
+**/.venv/
+venv/
+ENV/
+env/
+.env
+.env.*
+
+# Reflex / Next.js (Фронтенд)
+**/.web/
+**/node_modules/
+**/.next/
+**/.reflex/
+**/public/assets/
+
+# Инструменты разработки и логи
+**/.git/
+**/.gitignore
+**/.dockerignore
+**/.vscode/
+**/.idea/
+**/*.log
+docker-compose.yaml
+docker-compose*.yml
+README.md
+
+# Базы данных (если лежат в папке проекта)
+**/postgres_data/
+**/*.sqlite3
+**/*.db

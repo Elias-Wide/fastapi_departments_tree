@@ -1,15 +1,15 @@
-# Departments Tree Web App 🏢👥
+# Departments Tree Web App
 
 A web application designed to manage company structures, department hierarchies, and employees. This project was developed as a technical assessment for **hitalent**.
 
 The application implements a tree structure for departments (with built-in validation against cyclic dependencies) and covers full CRUD operations for departments and employees.
 
-## ✨ Features & Business Logic
+## Features & Business Logic
 - **Department Hierarchy**: Every department can have multiple nested sub-departments.
 - **Cycle Prevention**: Includes validation that prevents a department from becoming part of its own hierarchy (a department cannot be its own parent or a child of its own sub-departments).
 - **RESTful API**: Full CRUD management for organizational entities.
 
-## 🛠️ Tech Stack
+## Tech Stack
 - **Backend Framework:** FastAPI (Python)
 - **Data Validation:** Pydantic v2
 - **ORM:** SQLAlchemy (Async)
@@ -17,7 +17,7 @@ The application implements a tree structure for departments (with built-in valid
 - **Database:** PostgreSQL
 - **Containerization:** Docker & Docker Compose
 
-## 🚀 Quick Start (Local Run)
+##  Quick Start (Local Run)
 
 To run this project locally, ensure you have **Git** and **Docker** (with Docker Compose) installed.
 
@@ -41,20 +41,20 @@ To run this project locally, ensure you have **Git** and **Docker** (with Docker
    docker compose up --build
    ```
 
-Once the containers are built, the application will automatically run Alembic migrations and start the server.
+The application will automatically run Alembic migrations and start the server.
 
 * **Swagger UI (API Interactive Docs):** http://localhost:8000/docs
 * **ReDoc:** http://localhost:8000/redoc
 
 ---
 
-## 📊 API Specification (Endpoints)
+## API Specification (Endpoints)
 
 ### Departments
 
 
 
-## 📊 API Specification
+## API Specification
 
 
 | Method | Endpoint | Query Parameters | Description |
@@ -75,7 +75,7 @@ Once the containers are built, the application will automatically run Alembic mi
 
 ---
 
-## 🛠️ Project Structure
+##  Project Structure
 
 ```text
 ├── app/                  # Root project directory
@@ -124,6 +124,3 @@ Once the containers are built, the application will automatically run Alembic mi
 │   └── main.py           # FastAPI application entrypoint
 
 ```
-
-## 📄 License
-This project is developed solely as a technical assessment for hitalent. Released under the MIT License.

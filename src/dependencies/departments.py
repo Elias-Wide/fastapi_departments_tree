@@ -33,9 +33,11 @@ async def get_department_delete_params(
 
 
 async def get_department_search_params(
-    depth: int, include_employees: bool = True
+    depth: int = None, include_employees: bool = True
 ):
     """Validate and return parameters for department search."""
+    if not depth:
+        depth = 1
     if depth < DepartmentsConst.MIN_DEPTH:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,

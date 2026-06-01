@@ -46,7 +46,7 @@ class DepartmentsRepo(SQLAlchemyRepository):
             DepartmentsORM: The created department record.
         """
         obj = await super().add_one(department_data)
-        department_with_descendants = await self.get_department_tree(
+        department_with_descendants = await self.get_department_hierarchy(
             department_id=obj.id,
             depth=DepartmentsConst.MAX_DEPTH,
             include_employees=False,
@@ -75,7 +75,7 @@ class DepartmentsRepo(SQLAlchemyRepository):
     ) -> DepartmentsORM:
         """Update an existing department's details and trigger check."""
         if update_data.parent_id:
-            descendants = await self.get_department_tree(
+            descendants = await self.get_department_hierarchy(
                 department_id=department.id,
                 depth=DepartmentsConst.MAX_DEPTH,
                 include_employees=False,
@@ -106,7 +106,7 @@ class DepartmentsRepo(SQLAlchemyRepository):
                 DepartmentsErrorMessages.ERR_GET_DEPT_WITH_EMP_FAILED
             ) from e
 
-    async def get_department_tree(
+    async def get_department_hierarchy(
         self,
         department_id: int,
         depth: int,

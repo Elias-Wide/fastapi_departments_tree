@@ -11,7 +11,7 @@ def valid_department_dicts() -> list[dict]:
     return [
         {'name': 'HR Department', 'parent_id': None},
         {'name': 'IT Department', 'parent_id': None},
-        {'name': 'Backend Team', 'parent_id': 2},
+        {'name': 'Marketing Department', 'parent_id': None},
     ]
 
 
