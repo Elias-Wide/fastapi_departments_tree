@@ -82,15 +82,15 @@ The application will automatically run Alembic migrations and start the server.
 │   ├── api/              # API Routing layer
 │   │   └── endpoints/
 │   │       └─v1/
-│   │            ├── departments.py
-│   │            ├── employees.py
-│   │            └── routers.py
-│   ├── core/                            # App configuration & logging
-│   │   ├── exceptions/                  # Centralized exception handling
-│   │   │   ├── api/                     # API layer exceptions (4xx, validation)
-│   │   │   ├── database/                # DB layer errors (Not Found, Integrity)
-│   │   │   ├── services/                # Business logic exceptions (cycling, etc.)
-│   │   │   ├── handler.py               # FastAPI exception handlers (global catch)
+│   │          ├── departments.py
+│   │          ├── employees.py
+│   │          └── routers.py
+│   ├── core/                    # App configuration & logging
+│   │   ├── exceptions/          # Centralized exception handling
+│   │   │   ├── api/             # API layer exceptions (4xx, validation)
+│   │   │   ├── database/        # DB layer errors (Not Found, Integrity)
+│   │   │   ├── services/        # Business logic exceptions (cycling, etc.)
+│   │   │   ├── handler.py       # FastAPI exception handlers (global catch)
 │   │   │   └── mapper.py
 │   │   ├── constants/    # Business logic constants
 │   │   ├── logging.py 
@@ -118,7 +118,7 @@ The application will automatically run Alembic migrations and start the server.
 │   │   └── employees.py
 │   ├── tests/            # Pytest test suite
 │   │   ├── fixtures/     # Test database fixtures
-│   │   └── pytest.ini
+│   │   └── conftest.py
 │   ├── config.py         # Environment variables configuration
 │   ├── conftest.py       # Global pytest configurations
 │   ├── Dockerfile        # Docker container configuration
