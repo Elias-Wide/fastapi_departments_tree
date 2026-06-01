@@ -9,6 +9,6 @@ RUN poetry config virtualenvs.create false && \
 
 COPY . .
 
-RUN chmod +x entrypoint.sh
+RUN chmod +x ./entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]
