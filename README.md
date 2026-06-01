@@ -80,10 +80,11 @@ The application will automatically run Alembic migrations and start the server.
 ```text
 ├── app/                  # Root project directory
 │   ├── api/              # API Routing layer
-│   │   └── endpoints/v1/
-│   │       ├── departments.py
-│   │       ├── employees.py
-│   │       └── routers.py
+│   │   └── endpoints/
+│   │       └─v1/
+│   │            ├── departments.py
+│   │            ├── employees.py
+│   │            └── routers.py
 │   ├── core/                            # App configuration & logging
 │   │   ├── exceptions/                  # Centralized exception handling
 │   │   │   ├── api/                     # API layer exceptions (4xx, validation)
@@ -111,7 +112,7 @@ The application will automatically run Alembic migrations and start the server.
 │   ├── schemas/          # Pydantic data validation schemas
 │   │   ├── departments.py
 │   │   └── employees.py
-│   ├── services/         # Core business logic (anti-cycling checks)
+│   ├── services/         # Core business logic
 │   │   ├── base.py
 │   │   ├── departments.py
 │   │   └── employees.py
