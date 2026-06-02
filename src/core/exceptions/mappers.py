@@ -5,6 +5,7 @@ from src.core.exceptions.api.departments import (
     APIException,
     DepartmentConflictAPIException,
     DepartmentNotFoundAPIException,
+    DepartmentParentInvalidException,
     DepartmentSelfReferenceAPIException,
     DepartmentValidationAPIException,
 )
@@ -56,7 +57,7 @@ class DepartmentsExcMapper(BaseExceptionsMapper):
         DepartmentNotFoundError: DepartmentNotFoundAPIException,
         DepartmentSelfReferenceError: DepartmentSelfReferenceAPIException,
         DepartmentValidationError: DepartmentValidationAPIException,
-        ParentDepartmentError: DepartmentValidationAPIException,
+        ParentDepartmentError: DepartmentParentInvalidException,
     }
 
 

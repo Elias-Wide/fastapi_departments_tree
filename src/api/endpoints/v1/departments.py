@@ -72,6 +72,7 @@ async def get_department(
 @router.post(
     '/{department_id}/employees',
     response_model=SEmployeesResponse,
+    status_code=status.HTTP_201_CREATED,
     summary='Add an employee to the department',
 )
 async def add_one_to_department(
@@ -124,9 +125,7 @@ async def delete_department(
     reassign_to_id = delete_params.get('reassign_to_department_id')
     departments_service = DepartmentsService(db)
     employees_service = EmployeesService(db)
-    current_dept = await db.departments.get_one_by_id(department_id)
-    if not current_dept:
-        raise DepartmentNotFoundError()
+    await departments_service.get_department_by_id(department_id)
     if mode == DepartmentsConst.REASSIGN_DELETE_MODE:
         if reassign_to_id == department_id:
             raise DepartmentSelfReferenceError(

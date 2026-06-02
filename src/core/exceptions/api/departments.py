@@ -57,3 +57,8 @@ class DepartmentValidationAPIException(DepartmentServiceAPIException):
 
     STATUS_CODE = status.HTTP_400_BAD_REQUEST
     DETAIL = 'Provided department data is invalid.'
+
+
+class DepartmentParentInvalidException(DepartmentServiceAPIException):
+    STATUS_CODE = status.HTTP_400_BAD_REQUEST
+    DETAIL = 'Provided parent id is invalid (not exist).'

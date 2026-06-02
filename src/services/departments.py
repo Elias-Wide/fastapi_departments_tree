@@ -13,7 +13,6 @@ from src.core.exceptions.services.departments import (
     DepartmentNotFoundError,
     DepartmentSelfReferenceError,
     DepartmentServiceError,
-    ParentDepartmentError,
 )
 from src.core.logging import get_logger
 from src.core.messages.services.departments import (
@@ -66,9 +65,7 @@ class DepartmentsService(BaseService):
                 )
             ) from e
         except DBForeignKeyViolationError as e:
-            raise ParentDepartmentError(
-                DepartmentsErrorMessages.FK_PARENT_DEPT_NOT_FOUND
-            ) from e
+            raise (DepartmentsErrorMessages.FK_PARENT_DEPT_NOT_FOUND) from e
         except DbDepartmentSelfReferenceError as e:
             logger.error(
                 DepartmentsLogMessages.LOG_CREATE_DEPT_SELF_PARENT_ERR.format(
@@ -113,7 +110,7 @@ class DepartmentsService(BaseService):
         Returns:
             SDepartmentsResponse: The updated department record.
         """
-        department = await self.db.departments.get_one_by_id(id=department_id)
+        department = await self.db.departments.get_one_by_id(pk=department_id)
         if not department:
             raise DepartmentNotFoundError()
         updated_department = await self.db.departments.update(
@@ -243,6 +240,3 @@ class DepartmentsService(BaseService):
         if not root_node:
             raise DepartmentNotFoundError()
         return root_node
-
-    async def get_department_children(self, department_id: int):
-        return await self.db.departments.get_department_hierarchy

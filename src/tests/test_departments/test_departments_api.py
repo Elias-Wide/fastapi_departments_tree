@@ -106,11 +106,3 @@ async def test_add_one_to_department(
     response = await client.post(url, json=payload)
     assert response.status_code == 201
     assert response.json()['full_name'] == 'Jane Smith'
-
-
-@pytest.mark.asyncio
-async def test_delete_department(
-    client: AsyncClient,
-    sample_departments: list,
-) -> None:
-    pass

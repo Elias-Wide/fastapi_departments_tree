@@ -52,3 +52,4 @@ class DepartmentsErrorMessages:
     ERR_DEL_DEPT_SAME_ID = (
         'Cannot reassign employees to the department for deletion.'
     )
+    ERR_DEPATMENT_EXIST = 'Department with provided data already exist.'

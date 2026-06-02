@@ -18,7 +18,7 @@ class EmployeeNotFoundAPIException(EmployeeServiceAPIException):
     """
 
     STATUS_CODE = status.HTTP_404_NOT_FOUND
-    DETAIL = 'Employee with this ID does not exist.'
+    DETAIL = 'Employee with provided ID does not exist.'
 
 
 class EmployeeConflictAPIException(EmployeeServiceAPIException):
@@ -27,7 +27,7 @@ class EmployeeConflictAPIException(EmployeeServiceAPIException):
     """
 
     STATUS_CODE = status.HTTP_409_CONFLICT
-    DETAIL = 'Employee with this data already exists.'
+    DETAIL = 'Employee with provided data already exists.'
 
 
 class EmployeeAPIException(EmployeeServiceAPIException):

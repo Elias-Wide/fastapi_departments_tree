@@ -3,7 +3,7 @@ class ApiErrorMessages:
         'An unexpected error occurred. Please try again later.'
     )
     DEPARTMENT_ID_FOR_REASSIGNMENT_REQUIRED = (
-        'The {param} parameter is requiredwhen mode is set to {m}'
+        'The {param} parameter is requiredwhen mode is set to {mode}'
     )
     DEPARTMENT_SEARCH_DEPTH_TOO_LOW = (
         'The {param} parameter must be at least {min_depth} '
